@@ -120,29 +120,53 @@ class Verity(discord.Client):
 
 # Initialization function
 def initialize():
-    print('Checking for secret key in file: verityKey.secret')
+
+    # Checks the config file: verity.config
+    configFilePath = 'verity.config'
+
+    if (path.exists(configFilePath)):
+        print('Reading config file')
+    else:
+        print('Config file not found, generating default config file')
+        with open('verity.config') as configFile:
+            configFile.write('ClientTokenFile=verityKey.secret')
+            configFile.write('CogsPath=Cogs/')
+        configFile.close()
+        print('Default config file generated')
+
+    # Parsing the config file for configuration values
+    with open(configFilePath) as configFile:
+        # ClientTokenFile
+        secretFilePath = configFile.readline().split('=', maxsplit=1)[1].rstrip()
+        # CogsPath
+        cogsPath = configFile.readline().split('=', maxsplit=1)[1].rstrip()
+
+    print('Checking for secret key in file: ' + str(secretFilePath))
 
     # Checks to see if verityKey.secret exists, if it doesn't creates it.
-    if (path.exists('verityKey.secret')):
+    if (path.exists(secretFilePath)):
         print('Client secret file found, proceeding')
     else: 
-        print('Client secret file not found, creating verityKey.secret')
-        with open('verityKey.secret', 'w') as secretFile:
+        print('Client secret file not found, creating ' + str(secretFilePath))
+        with open(secretFilePath, 'w') as secretFile:
             secretFile.write('')
         secretFile.close()
-        print('Put the client secret key in verityKey.secret')
+        print('Put the client secret key in ' + str(secretFilePath))
         sys.exit()
         
-    print('Attempting to read client secret key')
-    with open('verityKey.secret', 'r') as secretFile:
+    # Reading the client secret key
+    print('Attempting to read client secret key from ' + str(secretFilePath))
+
+    with open(secretFilePath, 'r') as secretFile:
         clientSecretKey = secretFile.read()
     secretFile.close()
 
-    if len(clientSecretKey) < 1:
-        print('Error: verityKey.secret is empty.')
-        print('Put the client secret key in verityKey.secret')
+    if len(clientSecretKey.split(' \n\t')) < 1:
+        print('Error: ' + str(secretFilePath) + ' is empty.')
+        print('Put the client secret key in ' + str(secretFilePath))
         sys.exit()
         
+    # Initializing Verity Bot
     print('Initializing Verity:')
     ver = Verity()
     ver.loop.create_task(ver.verify())
