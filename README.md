@@ -1,0 +1,3 @@
+# Verity
+Verification Discord Bot
+
