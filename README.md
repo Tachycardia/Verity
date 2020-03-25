@@ -27,3 +27,10 @@ Alternatively, instructions to install the discord package can be found here:
 https://pypi.org/project/discord.py/
 
 Once the dependencies are met, the bot can be run by running `python3 verity.py`.
+
+Changelog:
+----------
+
+Version 0.8: 
+
+- Added editable config file for paths

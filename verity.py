@@ -1,26 +1,38 @@
 #!/usr/bin/env python3
 # Program: verity.py
 # Author: Darren Trieu Nguyen
-# Verison: 0.7
-# Function: Bot to verify users
+# Version: 0.8
+# Function: General discord bot
 
 import sys
 import os.path
 from os import path
 import logging
 import asyncio
-import discord
-import sys
+from datetime import date
+import datetime
 import re
 import time
 
-from datetime import date
-import datetime
+try:
+    from discord.ext import commands
+    import discord
+except ImportError:
+    print('Error: Discord.py is not installed.\n')
+    sys.exit(1)
+
+from cogs.reply import Reply
+from cogs.greetings import Greetings
+
 
 # Verification Bot
-class Verity(discord.Client):
+# TODO: Move Verity class functions to "main cog"
+class Verity(commands.Bot):
 
-    async def on_ready(self):
+    def __init__(self, command_prefix='`'):
+        pass
+
+    async def on_ready(self, command_prefix='`'):
         # Preamble
         print('Logged in as {0.user}'.format(self))
         print('Currently logged into ' + str(len(self.guilds)) \
@@ -51,22 +63,13 @@ class Verity(discord.Client):
                          'Channel: {0.channel.name}: ' + 
                          'Message from {0.author}: {0.content}'.format(message))
         # Do not reply to itself
+        """
         if message.author == self.user:
             return
 
         if ('Verity' in message.content) or ('verity' in message.content):
             await message.channel.send('Hello!')
-
-    """ Manages log date
-        DEPRECATED
-    """
-    async def chatLog(self):
-        while(True):
-            logName = date.today().isoformat() + '.log'
-            logging.basicConfig(filename=logName, level=logging.INFO)
-
-            # Run log name updates
-            await asyncio.sleep(3600)
+        """
 
     """ Verification Function:
         Parses through all members with the role 'Unverified'
@@ -168,8 +171,11 @@ def initialize():
         
     # Initializing Verity Bot
     print('Initializing Verity:')
-    ver = Verity()
-    ver.loop.create_task(ver.verify())
+    #ver = Verity()
+    ver = commands.Bot('`')
+    #ver.add_cog(Greetings(ver))
+    ver.add_cog(Reply(ver))
+    #ver.loop.create_task(ver.verify())
     ver.run(clientSecretKey)
            
     return ver
