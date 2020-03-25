@@ -12,6 +12,8 @@ class Reply(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    """ Replies 'Hello!' when Verity's name appears in a message
+    """
     @commands.Cog.listener()
     async def on_message(self, message):
         # Do not reply to itself
@@ -21,6 +23,8 @@ class Reply(commands.Cog):
         if ('Verity' in message.content) or ('verity' in message.content):
             await message.channel.send('Hello!')
 
+    """ Welcomes a member when they join
+    """
     @commands.Cog.listener()
     async def on_member_join(self, member):
         channel = member.guild.system_channel

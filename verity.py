@@ -21,8 +21,10 @@ except ImportError:
     print('Error: Discord.py is not installed.\n')
     sys.exit(1)
 
+from cogs.core import Core
 from cogs.reply import Reply
 from cogs.greetings import Greetings
+from cogs.verify import Verify
 
 
 # Verification Bot
@@ -31,22 +33,6 @@ class Verity(commands.Bot):
 
     def __init__(self, command_prefix='`'):
         pass
-
-    async def on_ready(self, command_prefix='`'):
-        # Preamble
-        print('Logged in as {0.user}'.format(self))
-        print('Currently logged into ' + str(len(self.guilds)) \
-              + ' servers: ')
-        for guild in self.guilds:
-            print('Server: ' + str(guild.name)\
-                  + '; Total Members: ' + str(len(guild.members)))
-        print('Current date is: ' + str(date.today().isoformat()))
-
-        # Initiating Log
-        logName = date.today().isoformat() + '.log'
-        logging.basicConfig(filename=logName, level=logging.INFO)
-
-        print('Initialization Complete')
 
     async def on_message(self, message):
         logName = date.today().isoformat() + '.log'
@@ -62,58 +48,7 @@ class Verity(commands.Bot):
                          ']: Direct Message: ' + \
                          'Channel: {0.channel.name}: ' + 
                          'Message from {0.author}: {0.content}'.format(message))
-        # Do not reply to itself
-        """
-        if message.author == self.user:
-            return
 
-        if ('Verity' in message.content) or ('verity' in message.content):
-            await message.channel.send('Hello!')
-        """
-
-    """ Verification Function:
-        Parses through all members with the role 'Unverified'
-        If the unverified member has been a member of the server for more
-        than threshold days, kick the member
-        Default Threshold = 30 days
-    """
-    async def verify(self, threshold=14):
-        while(True):
-            logName = date.today().isoformat() + '.log'
-            logging.basicConfig(filename=logName, level=logging.INFO)
-
-            today = str(datetime.datetime.now())
-            unverifiedDict = {}
-            # Checking each server 
-            for guild in self.guilds:
-                # Distinguishing members with a role of the name 'Unverified'
-                unverifiedMembers = [member for member in guild.members \
-                                     if 'Unverified' \
-                                     in [role.name for role in member.roles]]
-                logging.info('Current unverified members in ' \
-                             + str(guild.name) + ': ')
-                for member in unverifiedMembers:
-                    unverifiedDict[member] = re.split('-| |\.', \
-                                                      str(member.joined_at))
-                # Checking each unverified member
-                for member in unverifiedDict.keys():
-                    joinDate = date(int(unverifiedDict[member][0]), \
-                                    int(unverifiedDict[member][1]), \
-                                    int(unverifiedDict[member][2]))
-                    unverifiedTime = date.today() - joinDate
-                    logging.info('[' + str(today) + ']:' \
-                                 + str(member.name) + ' has spent '\
-                                 + str(unverifiedTime.days) \
-                                 + ' days unverified')
-                    if (unverifiedTime.days >= threshold):
-                        await guild.kick(member)
-                        logging.info('[' + str(today) + ']:' \
-                                     'Kicking ' + str(member.name) + ' from ' \
-                                     + str(guild.name) \
-                                     + ' for being unverified for ' \
-                                     + str(unverifiedTime.days) + ' days')
-            # Run verifications checks every hour
-            await asyncio.sleep(3600)
 
     """
     async def retrieveAudit(self, guild, limit=-1):
@@ -173,8 +108,9 @@ def initialize():
     print('Initializing Verity:')
     #ver = Verity()
     ver = commands.Bot('`')
-    #ver.add_cog(Greetings(ver))
     ver.add_cog(Reply(ver))
+    ver.add_cog(Core(ver))
+    #ver.add_cog(Verify(ver))
     #ver.loop.create_task(ver.verify())
     ver.run(clientSecretKey)
            
