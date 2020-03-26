@@ -34,3 +34,4 @@ Changelog:
 Version 0.8: 
 
 - Added editable config file for paths
+- Separated bot functions into cogs

@@ -21,11 +21,7 @@ except ImportError:
     print('Error: Discord.py is not installed.\n')
     sys.exit(1)
 
-from cogs.core import Core
-from cogs.reply import Reply
-from cogs.greetings import Greetings
-from cogs.verify import Verify
-
+import cogs
 
 # Verification Bot
 # TODO: Move Verity class functions to "main cog"
@@ -108,8 +104,8 @@ def initialize():
     print('Initializing Verity:')
     #ver = Verity()
     ver = commands.Bot('`')
-    ver.add_cog(Reply(ver))
-    ver.add_cog(Core(ver))
+    ver.add_cog(cogs.Reply(ver))
+    ver.add_cog(cogs.Core(ver))
     #ver.add_cog(Verify(ver))
     #ver.loop.create_task(ver.verify())
     ver.run(clientSecretKey)
