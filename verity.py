@@ -106,6 +106,7 @@ def initialize():
     ver = commands.Bot('`')
     ver.add_cog(cogs.Reply(ver))
     ver.add_cog(cogs.Core(ver))
+    ver.add_cog(cogs.Admin(ver))
     #ver.add_cog(Verify(ver))
     #ver.loop.create_task(ver.verify())
     ver.run(clientSecretKey)
